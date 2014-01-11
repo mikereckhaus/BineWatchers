@@ -1,0 +1,50 @@
+package com.example.binewatchers;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class MainActivity extends Activity {
+
+	Button buttonCalculate;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        /*buttonCalculate.setOnClickListener(new OnClickListener() {
+        	 
+			@Override
+			public void onClick(View arg0) {
+ 
+				EditText editTextFat = (EditText) findViewById(R.id.editTextFat);
+				EditText editTextKCal = (EditText) findViewById(R.id.editTextKCal);
+				EditText editTextWeight = (EditText) findViewById(R.id.editTextWeight);
+				
+				double fat =  Double.parseDouble(editTextFat.getText().toString());
+				double kCal =  Double.parseDouble(editTextKCal.getText().toString());
+				double weight =  Double.parseDouble(editTextFat.getText().toString());
+				
+				EditText editTextResult = (EditText) findViewById(R.id.editText1);
+				// (cal / 60 + f / 9) * gramm
+				Double res = ( kCal / 60  + fat / 9 ) * weight;
+				editTextResult.setText(res.toString());
+			}
+ 
+		});*/
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+}
