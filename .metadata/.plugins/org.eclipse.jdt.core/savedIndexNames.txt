@@ -1,4 +1,0 @@
-INDEX VERSION 1.126+C:\Develop\Workspaces\BineWatchers\.metadata\.plugins\org.eclipse.jdt.core
-3940002787.index
-4037133646.index
-1427493942.index
