@@ -24,7 +24,7 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
  
         // Open FragmentTab2.java
         case 1:
-            FragmentTabCalculator fragmenttab2 = new FragmentTabCalculator();
+            FragmentTabDayCount fragmenttab2 = new FragmentTabDayCount();
             return fragmenttab2;
  
         // Open FragmentTab3.java

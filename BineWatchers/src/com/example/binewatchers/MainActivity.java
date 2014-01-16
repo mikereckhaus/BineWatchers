@@ -2,6 +2,8 @@ package com.example.binewatchers;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 public class MainActivity extends SherlockFragmentActivity  {
-
+	
     // Declare Variables
     ActionBar mActionBar;
     ViewPager mPager;
@@ -74,17 +76,17 @@ public class MainActivity extends SherlockFragmentActivity  {
         };
  
         // Create first Tab
-        tab = mActionBar.newTab().setText("Tab1").setTabListener(tabListener);
+        tab = mActionBar.newTab().setText("Calculator").setTabListener(tabListener);
         mActionBar.addTab(tab);
  
         // Create second Tab
-        tab = mActionBar.newTab().setText("Tab2").setTabListener(tabListener);
+        tab = mActionBar.newTab().setText("DayCount").setTabListener(tabListener);
         mActionBar.addTab(tab);
  
         // Create third Tab
-        tab = mActionBar.newTab().setText("Tab3").setTabListener(tabListener);
+        tab = mActionBar.newTab().setText("ToDo").setTabListener(tabListener);
         mActionBar.addTab(tab);
-       }
+    }
 
 
     @Override
