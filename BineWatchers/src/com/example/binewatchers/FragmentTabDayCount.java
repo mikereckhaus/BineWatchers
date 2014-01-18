@@ -1,5 +1,7 @@
 package com.example.binewatchers;
 
+import java.text.DecimalFormat;
+
 import com.actionbarsherlock.app.SherlockFragment;
 
 import android.content.Context;
@@ -67,18 +69,11 @@ public class FragmentTabDayCount extends SherlockFragment {
      * Calc free points from daily points and used ones and sets the textfield
      */
 	private void setFreePoints() {
-		Double dailyPoints = 0.0;
-		Double usedPoints = 0.0;
+		Double dailyPoints = Converter.editTextToDouble(editTextDailyPoints);
+		Double usedPoints = Converter.editTextToDouble(editTextUsedPoints);
 		
-		if (editTextDailyPoints.getText().toString() != "" ){
-			dailyPoints = Double.parseDouble(editTextDailyPoints.getText().toString());
-		}
-		if ( editTextUsedPoints.getText().toString() != "")
-		{
-			usedPoints = Double.parseDouble(editTextUsedPoints.getText().toString());
-		}
-		Double res = dailyPoints - usedPoints;
-		editTextFreePoints.setText(res.toString());
+		Double res = dailyPoints - usedPoints;		
+		editTextFreePoints.setText(String.format("%.2f", res));
 	}
     
     public void onActivityCreated(Bundle savedInstanceState) { 
@@ -97,6 +92,12 @@ public class FragmentTabDayCount extends SherlockFragment {
     	super.onStop();
     	float usedPoints = Float.parseFloat(editTextUsedPoints.getText().toString());
     	PreferenceProvider.getInstance().setUsedPoints(	usedPoints);
+    }
+    
+    public void consumePoints(double amount)
+    {
+    	Double newUsedPoints = Converter.editTextToDouble(editTextUsedPoints) + amount;
+    	editTextUsedPoints.setText(String.format("%.2f", newUsedPoints));
     }
 	
 }
