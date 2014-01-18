@@ -27,7 +27,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="right"
                 android:text="KCal /100 g" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -38,7 +40,7 @@
                 android:id="@+id/editTextFat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="4.68"
+                android:layout_weight="8.55"
                 android:inputType="numberDecimal" >
 
                 <requestFocus />
@@ -49,7 +51,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="right"
                 android:text="Fett / 100g" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -100,6 +104,7 @@
                 android:id="@+id/buttonEat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:text="Essen!" />
 
         </LinearLayout>

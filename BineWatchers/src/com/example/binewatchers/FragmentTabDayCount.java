@@ -90,8 +90,8 @@ public class FragmentTabDayCount extends SherlockFragment {
     public void onStop()
     {
     	super.onStop();
-    	float usedPoints = Float.parseFloat(editTextUsedPoints.getText().toString());
-    	PreferenceProvider.getInstance().setUsedPoints(	usedPoints);
+    	Double usedPoints = Converter.editTextToDouble(editTextUsedPoints);
+    	PreferenceProvider.getInstance().setUsedPoints(	usedPoints.floatValue() );
     }
     
     public void consumePoints(double amount)

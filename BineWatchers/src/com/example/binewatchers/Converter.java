@@ -14,8 +14,6 @@ public class Converter {
 				dailyPoints = Double.parseDouble(editText.getText().toString().replace(',', '.'));
 			}
 		}
-		
-		return dailyPoints;
-		
+		return dailyPoints;	
 	}
 }

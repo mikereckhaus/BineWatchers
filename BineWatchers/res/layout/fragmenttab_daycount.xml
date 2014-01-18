@@ -34,9 +34,10 @@
             android:id="@+id/editTextUsedPoints"
             android:layout_width="54dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.38"
             android:ems="10"
-            android:text="0"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:text="0" />
 
         <TextView
             android:id="@+id/textView2"
@@ -49,6 +50,7 @@
             android:id="@+id/editTextFreePoints"
             android:layout_width="76dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.15"
             android:ems="10"
             android:enabled="false"
             android:inputType="numberDecimal"
@@ -60,7 +62,6 @@
             android:layout_height="wrap_content"
             android:text="frei"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </LinearLayout>
 
 </LinearLayout>
