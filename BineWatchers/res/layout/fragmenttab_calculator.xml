@@ -3,113 +3,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
+<ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"> <!--IMPORTANT otherwise backgrnd img. will not fill the whole screen -->
+    
     <LinearLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textViewKCal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:text="KCal /100g:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <EditText
-                android:id="@+id/editTextKCal"
-                android:layout_width="203dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="numberDecimal" />
+        <EditText
+            android:id="@+id/editTextKCal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:inputType="number" >
+         	<requestFocus />
+         </EditText>
+			
+        <TextView
+            android:id="@+id/textViewFat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:text="Fett / 100g:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="KCal /100 g" />
+        <EditText
+            android:id="@+id/editTextFat"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:inputType="number" />
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/textViewGramm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="left"
+            android:text="Gramm" 
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <EditText
-                android:id="@+id/editTextFat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="8.55"
-                android:inputType="numberDecimal" >
-
-                <requestFocus />
-            </EditText>
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="Fett / 100g" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <EditText
-                android:id="@+id/editTextWeight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.44"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Gramm" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <EditText
-                android:id="@+id/editTextPoints"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:enabled="false"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Punkte" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/buttonEat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Essen!" />
-
-        </LinearLayout>
-
+        <EditText
+            android:id="@+id/editTextWeight"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.44"
+            android:ems="10"
+            android:inputType="number" >        
+        </EditText>
+        
+        <TextView android:id="@+id/textViewPoints" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_gravity="left"
+            android:layout_weight="1" android:text="Punkte" 
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <EditText android:id="@+id/editTextPoints" 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:layout_weight="1" 
+            android:ems="10" 
+            android:enabled="false" 
+            android:inputType="numberDecimal" />
+              
+         <Button
+             android:id="@+id/buttonEat"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:text="Essen!" />
+   
     </LinearLayout>
 
- 
+</ScrollView>
 </RelativeLayout >

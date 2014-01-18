@@ -4,7 +4,10 @@ import java.text.DecimalFormat;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,7 +19,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 public class FragmentTabDayCount extends SherlockFragment {
 
@@ -25,6 +33,9 @@ public class FragmentTabDayCount extends SherlockFragment {
 	EditText editTextDailyPoints;
 	EditText editTextUsedPoints;
 	EditText editTextFreePoints;
+	
+	Button buttonReset;
+	Button buttonAddPoints;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +73,55 @@ public class FragmentTabDayCount extends SherlockFragment {
      
        	editTextUsedPoints.addTextChangedListener( freePointsWatcher );
        	setFreePoints();
+       		
+       	buttonReset = (Button)view.findViewById(R.id.buttonReset);
+       	buttonReset.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		        builder.setMessage("Sollen die verbrauchten Punkte wirklich auf 0 zurückgesetzt werden?")
+		               .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   editTextUsedPoints.setText(Double.toString(0.0));
+		                   }
+		               })
+		               .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                       // User cancelled the dialog
+		                   }
+		               });
+		        builder.show();
+			}
+		});
+       	
+    	buttonAddPoints = (Button)view.findViewById(R.id.buttonAddPoints);
+    	buttonAddPoints.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				LayoutInflater inflater = getActivity().getLayoutInflater();
+				final View setPointsView = inflater.inflate(R.layout.set_points_dialog, null);
+				builder.setView(setPointsView);
+		
+				builder.setMessage("Wie viele Punkte sollen abgezogen werden?");
+				builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		                   public void onClick(DialogInterface dialog, int id) {
+		                	   EditText editTextPointsToAdd = (EditText)setPointsView.findViewById(R.id.pointsToAdd);
+		                	   Double pointsToAdd = Converter.editTextToDouble(editTextPointsToAdd);
+		                	   consumePoints(pointsToAdd);
+		                   }
+		               });
+				
+				final AlertDialog dialog = builder.create();
+				
+				// add keyboard on focus
+				//dialog.getWindow().setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+				dialog.show();
+			}
+		});
+       	
        	return view;
     }
     
@@ -91,13 +151,25 @@ public class FragmentTabDayCount extends SherlockFragment {
     {
     	super.onStop();
     	Double usedPoints = Converter.editTextToDouble(editTextUsedPoints);
-    	PreferenceProvider.getInstance().setUsedPoints(	usedPoints.floatValue() );
+     	PreferenceProvider.getInstance().setUsedPoints(	usedPoints.floatValue() );
     }
     
     public void consumePoints(double amount)
     {
     	Double newUsedPoints = Converter.editTextToDouble(editTextUsedPoints) + amount;
     	editTextUsedPoints.setText(String.format("%.2f", newUsedPoints));
+    	
+    	TableLayout consumedTable = (TableLayout) getActivity().findViewById(R.id.tableLayoutConsumedPoints);
+    	 
+    	TableRow row = new TableRow(getActivity());
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+        row.setLayoutParams(lp);
+        
+        
+        TextView tv = new TextView(getActivity());
+        tv.setText("Blabli");
+        row.addView(tv);
+        
+        consumedTable.addView(row);
     }
-	
 }

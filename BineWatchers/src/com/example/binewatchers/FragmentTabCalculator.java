@@ -33,9 +33,9 @@ public class FragmentTabCalculator extends SherlockFragment {
 		editTextKCal = (EditText) view.findViewById(R.id.editTextKCal);
 		editTextWeight = (EditText) view.findViewById(R.id.editTextWeight);
 		editTextPoints = (EditText) view.findViewById(R.id.editTextPoints);
-		editTextFat.setText("0.0");
-		editTextKCal.setText("0.0");
-		editTextWeight.setText("100.0");
+		editTextFat.setText("0");
+		editTextKCal.setText("0");
+		editTextWeight.setText("100");
 		editTextPoints.setText("0.0");
 
 		TextWatcher calculatorWatcher = new TextWatcher() {
