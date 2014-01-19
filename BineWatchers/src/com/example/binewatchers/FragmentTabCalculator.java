@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -29,9 +30,19 @@ public class FragmentTabCalculator extends SherlockFragment {
 		View view = inflater.inflate(R.layout.fragmenttab_calculator,
 				container, false);
 
+		View.OnClickListener clearOnClick = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				((EditText) v).setText("");
+			}
+		};
+		
 		editTextFat = (EditText) view.findViewById(R.id.editTextFat);
+		editTextFat.setOnClickListener(clearOnClick);
 		editTextKCal = (EditText) view.findViewById(R.id.editTextKCal);
+		editTextKCal.setOnClickListener(clearOnClick);
 		editTextWeight = (EditText) view.findViewById(R.id.editTextWeight);
+		editTextWeight.setOnClickListener(clearOnClick);
 		editTextPoints = (EditText) view.findViewById(R.id.editTextPoints);
 		editTextFat.setText("0");
 		editTextKCal.setText("0");

@@ -1,6 +1,10 @@
 package com.example.binewatchers;
 
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import android.content.SharedPreferences;
 
 /**
@@ -12,7 +16,10 @@ import android.content.SharedPreferences;
 public class PreferenceProvider {
 	
 	// preferences Identifiers
-	public static final String USED_POINTS = "UsedPoints";
+	public static final String CONSUMED_POINTS_ENTRY_COUNT = "ConsumedPointsEntryCount";
+	public static final String CONSUME_DATE = "ConsumeDate";
+	public static final String CONSUME_POINTS = "ConsumePoints";
+	
 	
 	private static PreferenceProvider instance = new PreferenceProvider();
 	private SharedPreferences mPreferences;
@@ -29,19 +36,49 @@ public class PreferenceProvider {
 		return instance;
 	}
 	
-	public void setUsedPoints( float usedPoints )
+	public void setPointHistory( HashMap<String, Double> pointHistory )
 	{
+		int consumeEntriesCount = pointHistory.size();
 		SharedPreferences.Editor edit = mPreferences.edit();
-		edit.putFloat(USED_POINTS, usedPoints);
+		edit.putInt(CONSUMED_POINTS_ENTRY_COUNT, consumeEntriesCount);
+		
+		int i = 0;
+		// speichere in preferences:
+		for (Map.Entry<String, Double> entry : pointHistory.entrySet()) {
+		    // Store date
+			String key = entry.getKey();
+		    String identifier = CONSUME_DATE;
+		    identifier = identifier + i;
+		    edit.putString(identifier, key);
+		    
+		    // Store Points
+		    Double value = entry.getValue();
+		    identifier = CONSUME_POINTS;
+		    identifier = identifier + i;
+		    
+		    edit.putFloat(identifier, (value.floatValue()));
+			i++;	    
+		}
+		
 		edit.commit();
 	}
 
-	public float getUsedPoints( )
+	public LinkedHashMap<String, Double> getPointHistory( )
 	{
-		float defaultValue = 0.0f;
-		return mPreferences.getFloat(USED_POINTS, defaultValue);
+		LinkedHashMap<String, Double> result = new LinkedHashMap<String, Double>();
+		int defaultValue = 0;
+		
+		float defaultFloat = 0.0f;
+		String defaultString = "";
+		
+		int consumeEntriesCount = mPreferences.getInt(CONSUMED_POINTS_ENTRY_COUNT, defaultValue);
+		for (int i = 0; i < consumeEntriesCount; i++)
+		{
+			String date = mPreferences.getString(CONSUME_DATE + i, defaultString);
+			Double points = Double.valueOf(mPreferences.getFloat(CONSUME_POINTS + i, defaultFloat));
+			result.put(date, points);
+		}
+		
+		return result;
 	}
-	
-	
-
 }
