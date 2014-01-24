@@ -3,12 +3,17 @@ package com.example.binewatchers;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,25 +35,54 @@ public class FragmentTabCalculator extends SherlockFragment {
 		View view = inflater.inflate(R.layout.fragmenttab_calculator,
 				container, false);
 
-		View.OnClickListener clearOnClick = new View.OnClickListener() {
+	/*	View.OnClickListener clearOnClick = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				((EditText) v).setText("");
 			}
+		};*/
+		
+		View.OnFocusChangeListener clearOnClick = new View.OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if ( hasFocus )
+				{
+					((EditText) v).setText("");
+				}
+			};
 		};
 		
+		
 		editTextFat = (EditText) view.findViewById(R.id.editTextFat);
-		editTextFat.setOnClickListener(clearOnClick);
+		editTextFat.setOnFocusChangeListener(clearOnClick);
 		editTextKCal = (EditText) view.findViewById(R.id.editTextKCal);
-		editTextKCal.setOnClickListener(clearOnClick);
+		editTextKCal.setOnFocusChangeListener(clearOnClick);
 		editTextWeight = (EditText) view.findViewById(R.id.editTextWeight);
-		editTextWeight.setOnClickListener(clearOnClick);
+		editTextWeight.setOnFocusChangeListener(clearOnClick);
 		editTextPoints = (EditText) view.findViewById(R.id.editTextPoints);
-		editTextFat.setText("0");
-		editTextKCal.setText("0");
+		//editTextFat.setText("0");
+		//editTextKCal.setText("0");
 		editTextWeight.setText("100");
-		editTextPoints.setText("0.0");
-
+		//editTextPoints.setText("0.0");
+		
+		editTextWeight.setOnKeyListener(new View.OnKeyListener() {
+			
+			@Override
+			public boolean onKey(View view, int keyCode, KeyEvent event) {
+				if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+						   keyCode == EditorInfo.IME_ACTION_DONE ||
+						   event.getAction() == KeyEvent.ACTION_DOWN &&
+						   event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+				
+					InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+	                imm.hideSoftInputFromWindow(editTextWeight.getWindowToken(), 0);   
+					return true;
+				}
+				return false;
+			}
+		});
+		
 		TextWatcher calculatorWatcher = new TextWatcher() {
 
 			@Override

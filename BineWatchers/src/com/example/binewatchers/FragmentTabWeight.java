@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.zip.Inflater;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Matrix.ScaleToFit;
@@ -21,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -33,10 +31,9 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class FragmentTabDayCount extends SherlockFragment {
+public class FragmentTabWeight extends SherlockFragment {
 
 	DayCount dayCount = new DayCount();
-	public static final String USED_POINTS = "UsedPoints";
 	
 	EditText editTextDailyPoints;
 	EditText editTextUsedPoints;
@@ -149,7 +146,7 @@ public class FragmentTabDayCount extends SherlockFragment {
 				
 				final AlertDialog dialog = builder.create();
 				
-				final EditText editTextPointsToAdd = (EditText)setPointsView.findViewById(R.id.pointsToAdd);
+				EditText editTextPointsToAdd = (EditText)setPointsView.findViewById(R.id.pointsToAdd);
 				editTextPointsToAdd.setOnKeyListener(new View.OnKeyListener() {
 					@Override
 					public boolean onKey(View view, int keyCode, KeyEvent event) {
@@ -161,18 +158,6 @@ public class FragmentTabDayCount extends SherlockFragment {
 							return true;
 						}
 						return false;
-					}
-				});
-				
-				
-				dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-					
-					@Override
-					public void onShow(DialogInterface dialog) {
-						//((Dialog) dialog).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-						
-						InputMethodManager imm = (InputMethodManager)editTextPointsToAdd.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-		                imm.showSoftInput(editTextPointsToAdd, 0);   
 					}
 				});
 								

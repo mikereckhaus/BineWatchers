@@ -19,6 +19,7 @@ public class PreferenceProvider {
 	public static final String CONSUMED_POINTS_ENTRY_COUNT = "ConsumedPointsEntryCount";
 	public static final String CONSUME_DATE = "ConsumeDate";
 	public static final String CONSUME_POINTS = "ConsumePoints";
+	public static final String DAILY_POINTS = "DailyPoints";
 	
 	
 	private static PreferenceProvider instance = new PreferenceProvider();
@@ -81,4 +82,20 @@ public class PreferenceProvider {
 		
 		return result;
 	}
+	
+	public void setDailyPoints( int dailyPoints)
+	{
+		SharedPreferences.Editor edit = mPreferences.edit();
+		edit.putInt(DAILY_POINTS, dailyPoints);
+		edit.commit();
+	}
+
+	public int getDailyPoints( )
+	{
+		int defaultValue = 0;
+		int result  = mPreferences.getInt(DAILY_POINTS, defaultValue);
+		
+		return result;
+	}
+
 }

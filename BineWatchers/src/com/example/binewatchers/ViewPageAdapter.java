@@ -30,7 +30,7 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
  
         // Open FragmentTab3.java
         case 2:
-        	FragmentTabCalculator fragmenttab3 = new FragmentTabCalculator();
+        	FragmentTabWeight fragmenttab3 = new FragmentTabWeight();
             return fragmenttab3;
         }
         return null;

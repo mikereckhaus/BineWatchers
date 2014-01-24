@@ -1,20 +1,17 @@
 package com.example.binewatchers;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 
 public class MainActivity extends SherlockFragmentActivity implements IPointsConsumerListener{
 	
@@ -23,11 +20,15 @@ public class MainActivity extends SherlockFragmentActivity implements IPointsCon
     ViewPager mPager;
     Tab tabCalculator;
     Tab tabDayCount;
-    Tab tab;
+    Tab tabWeight;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	
+    	// init preference provider
+        PreferenceProvider.getInstance().setSharedPreferences(PreferenceManager.getDefaultSharedPreferences(this));
+		
         // Get the view from activity_main.xml
         setContentView(R.layout.activity_main);
  
@@ -48,6 +49,10 @@ public class MainActivity extends SherlockFragmentActivity implements IPointsCon
                 super.onPageSelected(position);
                 // Find the ViewPager Position
                 mActionBar.setSelectedNavigationItem(position);
+/*                getWindow().setSoftInputMode(
+                	      WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);*/
+                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         };
  
@@ -86,8 +91,8 @@ public class MainActivity extends SherlockFragmentActivity implements IPointsCon
         mActionBar.addTab(tabDayCount);
  
         // Create third Tab
-        tab = mActionBar.newTab().setText("ToDo").setTabListener(tabListener);
-        mActionBar.addTab(tab);
+        tabWeight = mActionBar.newTab().setText("Weight").setTabListener(tabListener);
+        mActionBar.addTab(tabWeight);
     }
 
 

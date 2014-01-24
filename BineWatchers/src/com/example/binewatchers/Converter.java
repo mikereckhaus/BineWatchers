@@ -6,14 +6,27 @@ public class Converter {
 
 	public static Double editTextToDouble( EditText editText)
 	{
-		Double dailyPoints = 0.0;
+		Double result = 0.0;
 		if ( editText != null )
 		{
 			if (!editText.getText().toString().isEmpty() ){
 				
-				dailyPoints = Double.parseDouble(editText.getText().toString().replace(',', '.'));
+				result = Double.parseDouble(editText.getText().toString().replace(',', '.'));
 			}
 		}
-		return dailyPoints;	
+		return result;	
+	}
+	
+	public static Integer editTextToInt( EditText editText)
+	{
+		Integer result = 0;
+		if ( editText != null )
+		{
+			if (!editText.getText().toString().isEmpty() ){
+				
+				result = Integer.parseInt(editText.getText().toString());
+			}
+		}
+		return result;	
 	}
 }
