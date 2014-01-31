@@ -1,30 +1,32 @@
 package com.example.binewatchers;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.zip.Inflater;
 
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.PointStyle;
+import org.achartengine.model.TimeSeries;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.graphics.Matrix.ScaleToFit;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -32,164 +34,142 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class FragmentTabWeight extends SherlockFragment {
+	
+	// Data
+	WeightHistory weightHistory;
+	
+	// GUI
+	private Button buttonAddWeight;
+	private EditText editTextDate;
+	private EditText editTextWeight;
+	
+	// Graph
+	private GraphicalView mChart;
+	XYMultipleSeriesRenderer mRenderer;
+	XYMultipleSeriesDataset mDataset;
+	TimeSeries mSeries;
+	
+	public void onResume() {
+		super.onResume();
+		recreateTable((TableLayout) getActivity().findViewById(R.id.tableLayoutWeight));
+		mChart.repaint();
 
-	DayCount dayCount = new DayCount();
+	}
 	
-	EditText editTextDailyPoints;
-	EditText editTextUsedPoints;
-	EditText editTextFreePoints;
-	
-	Button buttonReset;
-	Button buttonAddPoints;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+    	weightHistory = new WeightHistory();
+   
+    	mDataset = new XYMultipleSeriesDataset();    	
         // Get the view from fragmenttab1.xml
-        View view = inflater.inflate(R.layout.fragmenttab_daycount, container, false);
-        
-        editTextDailyPoints = (EditText) view.findViewById(R.id.editTextDailyPoints);
-        editTextDailyPoints.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub	
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				PreferenceProvider.getInstance().setDailyPoints(Converter.editTextToInt(editTextDailyPoints));
-			}
-		});
-        
-        Integer dailyPoints = PreferenceProvider.getInstance().getDailyPoints();
-        if ( dailyPoints != 0 )
-        {
-        	editTextDailyPoints.setText(dailyPoints.toString());
-        }
-        
-        editTextUsedPoints = (EditText) view.findViewById(R.id.editTextUsedPoints);
-        editTextFreePoints = (EditText) view.findViewById(R.id.editTextFreePoints);
-
-        // calc free points when used points are changed
-        TextWatcher freePointsWatcher = new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				setFreePoints();
-			}
-		};
-     
-       	editTextUsedPoints.addTextChangedListener( freePointsWatcher );
-       	setFreePoints();
-       		
-       	buttonReset = (Button)view.findViewById(R.id.buttonReset);
-       	
-       	buttonReset.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		        builder.setMessage("Sollen die verbrauchten Punkte wirklich auf 0 zurückgesetzt werden?")
-		               .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   editTextUsedPoints.setText(Double.toString(0.0));
-		                	   // clear Table
-		                	   dayCount.reset();
-		                	   TableLayout consumedTable = (TableLayout) getActivity().findViewById(R.id.tableLayoutConsumedPoints); 
-		                	   recreateTable(consumedTable);
-		                   }
-		               })
-		               .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                       // User cancelled the dialog
-		                   }
-		               });
-		        builder.show();
-			}
-		});
-       	
-    	buttonAddPoints = (Button)view.findViewById(R.id.buttonAddPoints);
-    	buttonAddPoints.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				LayoutInflater inflater = getActivity().getLayoutInflater();
-				final View setPointsView = inflater.inflate(R.layout.set_points_dialog, null);
-				builder.setView(setPointsView);
+        View view = inflater.inflate(R.layout.fragmenttab_weight, container, false);
+             
+		// setzte default date auf heute
+		final Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		int day = c.get(Calendar.DAY_OF_MONTH);
 		
-				builder.setMessage("Wie viele Punkte sollen zur Tagessumme hinzugefügt werden?");
-				builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-		                   public void onClick(DialogInterface dialog, int id) {
-		                	   EditText editTextPointsToAdd = (EditText)setPointsView.findViewById(R.id.pointsToAdd);
-		                	   Double pointsToAdd = Converter.editTextToDouble(editTextPointsToAdd);
-		                	   consumePoints(pointsToAdd);
-		                   }
-		               });
+		editTextDate = (EditText)view.findViewById(R.id.editTextDate);
+		editTextDate.setText("" + day + "." + (month +  1) + "." + year );
+		// wenn edit text clicked,  zeige datepicker
+		editTextDate .setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+					
+					// store date in editText
+				    @Override
+				    public void onDateSet(DatePicker view, int year, int monthOfYear,
+				            int dayOfMonth) {
+				    	editTextDate.setText("" + dayOfMonth + "." + ( monthOfYear + 1 ) + "." + year );		    	
+				    }
+				};
+
+				final Calendar c = Calendar.getInstance();
+				int year = c.get(Calendar.YEAR);
+				int month = c.get(Calendar.MONTH);
+				int day = c.get(Calendar.DAY_OF_MONTH);
 				
-				final AlertDialog dialog = builder.create();
-				
-				EditText editTextPointsToAdd = (EditText)setPointsView.findViewById(R.id.pointsToAdd);
-				editTextPointsToAdd.setOnKeyListener(new View.OnKeyListener() {
-					@Override
-					public boolean onKey(View view, int keyCode, KeyEvent event) {
-						if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
-								   keyCode == EditorInfo.IME_ACTION_DONE ||
-								   event.getAction() == KeyEvent.ACTION_DOWN &&
-								   event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-						
-							return true;
-						}
-						return false;
-					}
-				});
-								
-				dialog.show();
-				
+	            new DatePickerDialog(getActivity(), date, year, month, day).show();
 			}
 		});
-    	
-    	dayCount.restore();
-    	editTextUsedPoints.setText(String.format("%.2f", dayCount.getUsedPoints()));
-        
-       	recreateTable((TableLayout) view.findViewById(R.id.tableLayoutConsumedPoints));
+		
+		editTextWeight = (EditText)view.findViewById(R.id.editTextWeight);				
+		
+		buttonAddWeight = (Button)view.findViewById(R.id.buttonAddWeight);
+		buttonAddWeight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Date date = Converter.stringToDate(editTextDate.getText().toString());
+				weightHistory.addEntry(date, Converter.editTextToDouble(editTextWeight));
+				recreateTable((TableLayout) getActivity().findViewById(R.id.tableLayoutWeight));
+				updateChartData();
+			}
+		});
+		
+		createDiagram((LinearLayout) view.findViewById(R.id.chart));
        	return view;
     }
     
-    /**
-     * Calc free points from daily points and used ones and sets the textfield
-     */
-	private void setFreePoints() {
-		Double dailyPoints = Converter.editTextToDouble(editTextDailyPoints);
-		Double usedPoints = Converter.editTextToDouble(editTextUsedPoints);
-		
-		Double res = dailyPoints - usedPoints;		
-		editTextFreePoints.setText(String.format("%.2f", res));
-	}
-    
-    public void onActivityCreated(Bundle savedInstanceState) { 
-        super.onActivityCreated(savedInstanceState);
+    void createDiagram(LinearLayout layout)
+    {
+		if (  mSeries == null )	{
+			mSeries = new TimeSeries("Weight Diagram");
+			mDataset.addSeries(mSeries);
+		}
+    	
+    	updateChartData();
+    	
+		if (mChart == null) {		
+		    int[] colors = new int[] { Color.GREEN };
+		    PointStyle[] styles = new PointStyle[] { PointStyle.POINT };
+
+		    mRenderer = new XYMultipleSeriesRenderer();
+		    mRenderer.setAxisTitleTextSize(16);
+		    mRenderer.setChartTitleTextSize(20);
+		    mRenderer.setLabelsTextSize(15);
+		    mRenderer.setLegendTextSize(15);
+		    mRenderer.setPointSize(5f);
+		    mRenderer.setMargins(new int[] { 20, 30, 15, 20 });
+		    int length = colors.length;
+		    for (int i = 0; i < length; i++) {
+		      XYSeriesRenderer r = new XYSeriesRenderer();
+		      r.setColor(colors[i]);
+		      r.setPointStyle(styles[i]);
+		    
+		      // fill crashes on Bines phone
+		      /*FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
+			  fill.setColor(Color.RED);
+			  r.addFillOutsideLine(fill);		*/	    
+		      mRenderer.addSeriesRenderer(r);
+		    }
+		  		    
+		    mRenderer.setChartTitle("");
+		  //  mRenderer.setXTitle("date");
+		    mRenderer.setYTitle("weight / Kg");
+
+		    mRenderer.setXAxisMin(weightHistory.getFirstDate().getTime());
+		    mRenderer.setXAxisMax(weightHistory.getLastDate().getTime());
+		    mRenderer.setYAxisMin(60);
+		    mRenderer.setYAxisMax(100);
+		    mRenderer.setAxesColor(Color.GRAY);
+		    mRenderer.setLabelsColor(Color.LTGRAY);    
+		    
+		    mChart = ChartFactory.getTimeChartView(getActivity(), mDataset,
+	//		      mRenderer, "MMM yyyy");
+				  mRenderer, "MMM");
+			// add the chart to the layout
+		    
+		    layout.addView(mChart);			 
+		} 
+    }
         
-    /*    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-  */}
+    public void onActivityCreated(Bundle savedInstanceState) { 
+        super.onActivityCreated(savedInstanceState);    
+    }
  
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -201,28 +181,14 @@ public class FragmentTabWeight extends SherlockFragment {
     public void onStop()
     {
     	super.onStop();
-    	dayCount.persist();
     }
-    
-    public void consumePoints(final double amount)
-    {
-    	// add entry in data
-    	SimpleDateFormat simpleFormat = new SimpleDateFormat("HH::mm::ss");
-    	Date date = new Date();
-    	
-    	dayCount.addEntry(simpleFormat.format(date), amount);
-    	editTextUsedPoints.setText(String.format("%.2f", dayCount.getUsedPoints()));
-     	
-    	recreateTable( (TableLayout) getActivity().findViewById(R.id.tableLayoutConsumedPoints));
-     }
-    
-    public void recreateTable(final TableLayout consumedTable)
+
+	public void recreateTable(final TableLayout consumedTable)
     {	    	
     	consumedTable.removeViewsInLayout(1, consumedTable.getChildCount()-1);
-    	
-    	HashMap<String, Double> entries = dayCount.getMap();
-    	for (Map.Entry<String, Double> entry : entries.entrySet()) {
-    		final String key = entry.getKey();
+    	    	
+    	for (Map.Entry<Date, Double> entry : weightHistory.getMap().entrySet()) {
+    		final Date key = entry.getKey();
 		    final Double value = entry.getValue();
  
 	    	//Add a rows to the table
@@ -235,7 +201,8 @@ public class FragmentTabWeight extends SherlockFragment {
 	        
 	        // time
 	        final TextView time = new TextView(getActivity());
-	        time.setText(key);
+	        DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
+	        time.setText(df.format(key));
 	        row.addView(time);
 	        
 	        // points
@@ -253,13 +220,16 @@ public class FragmentTabWeight extends SherlockFragment {
 				@Override
 				public void onClick(View v) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			        builder.setMessage("Soll der Eintrag: \n " + key + "\t" + String.format("%.2f", value) + " Punkte" + "\n wirklich entfernt werden?")
+					SimpleDateFormat d = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
+			        builder.setMessage("Soll der Eintrag: \n " + d.format(key) + "\t" + String.format("%.2f", value) + "Kg" + "\n wirklich entfernt werden?")
 			               .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
 			                   // on ok delete
 			            	   public void onClick(DialogInterface dialog, int id) {
-			   					dayCount.removeEntry(time.getText().toString());
+			            		Date date = Converter.stringToDate(time.getText().toString()); 
+			   					weightHistory.removeEntry(date);
 			   					consumedTable.removeView(row);
-			   			    	editTextUsedPoints.setText(String.format("%.2f", value));
+			   					updateChartData();
+			   					mChart.repaint();
 			                   }
 			               })
 			               .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
@@ -276,5 +246,19 @@ public class FragmentTabWeight extends SherlockFragment {
 		}
     	consumedTable.invalidate();
     }
-    
+	
+	void updateChartData()
+	{
+	    Date[] dateValues = weightHistory.getMap().keySet().toArray(new Date[weightHistory.getMap().keySet().size()]);
+	
+	    Double[] weightValues = weightHistory.getMap().values().toArray(new Double[weightHistory.getMap().values().size()]);  
+	    double[] converted = Converter.doubleArrayWrapperToDoubleArray(weightValues);
+	    
+		mSeries = (TimeSeries) (mDataset.getSeries())[0];
+		mSeries.clear();
+		int seriesLength = dateValues.length;
+		for (int k = 0; k < seriesLength; k++) {
+			mSeries.add(dateValues[k], converted[k]);
+		}
+	}
 }

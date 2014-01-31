@@ -1,18 +1,12 @@
 package com.example.binewatchers;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class DayCount {
 
 	LinkedHashMap<String, Double> pointHistory;
-	
-	void persist  ()
-	{
-		PreferenceProvider.getInstance().setPointHistory(pointHistory); 
-	}
-	
+		
 	void addEntry(String date, Double points)
 	{
 		pointHistory.put(date, points);

@@ -1,9 +1,13 @@
 package com.example.binewatchers;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import android.content.SharedPreferences;
 
@@ -19,6 +23,12 @@ public class PreferenceProvider {
 	public static final String CONSUMED_POINTS_ENTRY_COUNT = "ConsumedPointsEntryCount";
 	public static final String CONSUME_DATE = "ConsumeDate";
 	public static final String CONSUME_POINTS = "ConsumePoints";
+	
+	public static final String WEIGHT_ENTRY_COUNT = "WeightEntryCount";
+	public static final String WEIGHT_DATE = "WeightDate";
+	public static final String WEIGHT = "Weight";
+	
+	
 	public static final String DAILY_POINTS = "DailyPoints";
 	
 	
@@ -77,6 +87,54 @@ public class PreferenceProvider {
 		{
 			String date = mPreferences.getString(CONSUME_DATE + i, defaultString);
 			Double points = Double.valueOf(mPreferences.getFloat(CONSUME_POINTS + i, defaultFloat));
+			result.put(date, points);
+		}
+		
+		return result;
+	}
+	
+	public void setWeightHistory( Map<Date, Double> weightHistory )
+	{
+		int weightEntriesCount = weightHistory.size();
+		SharedPreferences.Editor edit = mPreferences.edit();
+		edit.putInt(WEIGHT_ENTRY_COUNT, weightEntriesCount);
+		
+		int i = 0;
+		// speichere in preferences:
+		for (Map.Entry<Date, Double> entry : weightHistory.entrySet()) {
+		    // Store date 
+			Date key = entry.getKey();
+			SimpleDateFormat sdf = new SimpleDateFormat( "dd.MM.yyyy", Locale.GERMANY );
+			String dateValue = sdf.format(key);
+		    String identifier = WEIGHT_DATE;
+		    identifier = identifier + i;
+		    edit.putString(identifier, dateValue);
+		    
+		    // Store Points
+		    Double value = entry.getValue();
+		    identifier = WEIGHT;
+		    identifier = identifier + i;
+		    
+		    edit.putFloat(identifier, (value.floatValue()));
+			i++;	    
+		}
+		
+		edit.commit();
+	}
+	
+	public TreeMap<Date, Double> getWeightHistory( )
+	{
+		TreeMap<Date, Double> result = new TreeMap<Date, Double>();
+		int defaultValue = 0;
+		
+		float defaultFloat = 0.0f;
+		String defaultString = "";
+		
+		int consumeEntriesCount = mPreferences.getInt(WEIGHT_ENTRY_COUNT, defaultValue);
+		for (int i = 0; i < consumeEntriesCount; i++)
+		{
+			Date date = Converter.stringToDate(mPreferences.getString(WEIGHT_DATE + i, defaultString));
+			Double points = Double.valueOf(mPreferences.getFloat(WEIGHT + i, defaultFloat));
 			result.put(date, points);
 		}
 		

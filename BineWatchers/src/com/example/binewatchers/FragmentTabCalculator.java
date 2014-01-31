@@ -1,13 +1,9 @@
 package com.example.binewatchers;
 
-import java.text.DecimalFormat;
-
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -35,13 +30,6 @@ public class FragmentTabCalculator extends SherlockFragment {
 		View view = inflater.inflate(R.layout.fragmenttab_calculator,
 				container, false);
 
-	/*	View.OnClickListener clearOnClick = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				((EditText) v).setText("");
-			}
-		};*/
-		
 		View.OnFocusChangeListener clearOnClick = new View.OnFocusChangeListener() {
 			
 			@Override

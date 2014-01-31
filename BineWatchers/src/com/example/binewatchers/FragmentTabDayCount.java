@@ -3,25 +3,19 @@ package com.example.binewatchers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.zip.Inflater;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Matrix.ScaleToFit;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -169,8 +163,7 @@ public class FragmentTabDayCount extends SherlockFragment {
 					
 					@Override
 					public void onShow(DialogInterface dialog) {
-						//((Dialog) dialog).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-						
+		
 						InputMethodManager imm = (InputMethodManager)editTextPointsToAdd.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		                imm.showSoftInput(editTextPointsToAdd, 0);   
 					}
@@ -216,13 +209,12 @@ public class FragmentTabDayCount extends SherlockFragment {
     public void onStop()
     {
     	super.onStop();
-    	dayCount.persist();
     }
     
     public void consumePoints(final double amount)
     {
     	// add entry in data
-    	SimpleDateFormat simpleFormat = new SimpleDateFormat("HH::mm::ss");
+    	SimpleDateFormat simpleFormat = new SimpleDateFormat("HH::mm::ss", Locale.GERMANY);
     	Date date = new Date();
     	
     	dayCount.addEntry(simpleFormat.format(date), amount);
@@ -274,7 +266,7 @@ public class FragmentTabDayCount extends SherlockFragment {
 			            	   public void onClick(DialogInterface dialog, int id) {
 			   					dayCount.removeEntry(time.getText().toString());
 			   					consumedTable.removeView(row);
-			   			    	editTextUsedPoints.setText(String.format("%.2f", value));
+			   			    	editTextUsedPoints.setText(String.format("%.2f", dayCount.getUsedPoints()));
 			                   }
 			               })
 			               .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
