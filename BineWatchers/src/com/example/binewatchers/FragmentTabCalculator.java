@@ -49,13 +49,14 @@ public class FragmentTabCalculator extends SherlockFragment {
 		editTextWeight = (EditText) view.findViewById(R.id.editTextWeight);
 		editTextWeight.setOnFocusChangeListener(clearOnClick);
 		editTextPoints = (EditText) view.findViewById(R.id.editTextPoints);
-		//editTextFat.setText("0");
-		//editTextKCal.setText("0");
 		editTextWeight.setText("100");
-		//editTextPoints.setText("0.0");
 		
 		editTextWeight.setOnKeyListener(new View.OnKeyListener() {
 			
+			/**
+			 * When done, hide the keyboard to see the auto calculated
+			 * result on small screens
+			 */
 			@Override
 			public boolean onKey(View view, int keyCode, KeyEvent event) {
 				if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
@@ -71,8 +72,10 @@ public class FragmentTabCalculator extends SherlockFragment {
 			}
 		});
 		
+		/**
+		 * Automatically calculate points when any value field changes
+		 */
 		TextWatcher calculatorWatcher = new TextWatcher() {
-
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
@@ -96,9 +99,11 @@ public class FragmentTabCalculator extends SherlockFragment {
 		editTextKCal.addTextChangedListener(calculatorWatcher);
 		editTextWeight.addTextChangedListener(calculatorWatcher);
 
+		/**
+		 * Whenn eaten, send to other fragment via the activity
+		 */
 		buttonEat = (Button)view.findViewById(R.id.buttonEat);
 		buttonEat.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				IPointsConsumerListener act = (IPointsConsumerListener)getActivity();
