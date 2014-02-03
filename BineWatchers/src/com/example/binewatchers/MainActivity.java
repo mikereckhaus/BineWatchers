@@ -48,8 +48,6 @@ public class MainActivity extends SherlockFragmentActivity implements IPointsCon
                 super.onPageSelected(position);
                 // Find the ViewPager Position
                 mActionBar.setSelectedNavigationItem(position);
-/*                getWindow().setSoftInputMode(
-                	      WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);*/
                 InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }

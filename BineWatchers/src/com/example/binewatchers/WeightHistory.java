@@ -12,7 +12,6 @@ public class WeightHistory {
 	
 	public WeightHistory() {
 		super();
-		weightHistory = PreferenceProvider.getInstance().getWeightHistory();
 	}
 	
 	void addEntry(Date date, Double weight)

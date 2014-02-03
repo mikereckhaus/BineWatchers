@@ -45,25 +45,32 @@ public class FragmentTabWeight extends SherlockFragment {
 	
 	// Graph
 	private GraphicalView mChart;
+	
 	XYMultipleSeriesRenderer mRenderer;
 	XYMultipleSeriesDataset mDataset;
 	TimeSeries mSeries;
 	
+	public FragmentTabWeight()
+	{
+		weightHistory = new WeightHistory();
+		weightHistory.restore();
+		    
+	}
+	
 	public void onResume() {
 		super.onResume();
 		recreateTable((TableLayout) getActivity().findViewById(R.id.tableLayoutWeight));
-		mChart.repaint();
-
+		createDiagram((LinearLayout) getView().findViewById(R.id.chart));
+		updateChartData();
+//		mChart.repaint();
 	}
 	
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-    	weightHistory = new WeightHistory();
-   
-    	mDataset = new XYMultipleSeriesDataset();    	
-        // Get the view from fragmenttab1.xml
+    	
+    	// Get the view from fragmenttab1.xml
         View view = inflater.inflate(R.layout.fragmenttab_weight, container, false);
              
 		// setzte default date auf heute
@@ -74,6 +81,7 @@ public class FragmentTabWeight extends SherlockFragment {
 		
 		editTextDate = (EditText)view.findViewById(R.id.editTextDate);
 		editTextDate.setText("" + day + "." + (month +  1) + "." + year );
+		
 		// wenn edit text clicked,  zeige datepicker
 		editTextDate .setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -110,61 +118,56 @@ public class FragmentTabWeight extends SherlockFragment {
 			}
 		});
 		
-		createDiagram((LinearLayout) view.findViewById(R.id.chart));
-       	return view;
+		return view;
     }
-    
+
     void createDiagram(LinearLayout layout)
     {
-		if (  mSeries == null )	{
-			mSeries = new TimeSeries("Weight Diagram");
-			mDataset.addSeries(mSeries);
-		}
-    	
-    	updateChartData();
-    	
-		if (mChart == null) {		
-		    int[] colors = new int[] { Color.GREEN };
-		    PointStyle[] styles = new PointStyle[] { PointStyle.POINT };
+    	mDataset = new XYMultipleSeriesDataset();    	
+        
+		//mSeries = new TimeSeries("Weight Diagram");
+    	mSeries = new TimeSeries("");
+		mDataset.addSeries(mSeries);
+
+		updateChartData();
+		int[] colors = new int[] { Color.GREEN };
+		PointStyle[] styles = new PointStyle[] { PointStyle.POINT };
 
 		    mRenderer = new XYMultipleSeriesRenderer();
-		    mRenderer.setAxisTitleTextSize(16);
-		    mRenderer.setChartTitleTextSize(20);
-		    mRenderer.setLabelsTextSize(15);
-		    mRenderer.setLegendTextSize(15);
-		    mRenderer.setPointSize(5f);
-		    mRenderer.setMargins(new int[] { 20, 30, 15, 20 });
+		    mRenderer.setAxisTitleTextSize(10);
+		    mRenderer.setChartTitleTextSize(10);
+		    mRenderer.setLabelsTextSize(10);
+		    mRenderer.setLegendTextSize(10);
+		    mRenderer.setPointSize(8f);
+		    mRenderer.setMargins(new int[] { 15, 25, 10, 15 });
 		    int length = colors.length;
-		    for (int i = 0; i < length; i++) {
-		      XYSeriesRenderer r = new XYSeriesRenderer();
-		      r.setColor(colors[i]);
-		      r.setPointStyle(styles[i]);
-		    
-		      // fill crashes on Bines phone
-		      /*FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
-			  fill.setColor(Color.RED);
-			  r.addFillOutsideLine(fill);		*/	    
-		      mRenderer.addSeriesRenderer(r);
-		    }
+		for (int i = 0; i < length; i++) {
+			XYSeriesRenderer r = new XYSeriesRenderer();
+			r.setColor(colors[i]);
+			r.setPointStyle(styles[i]);
+			    
+			// fill crashes on Bines phone
+			/*FillOutsideLine fill = new FillOutsideLine(FillOutsideLine.Type.BOUNDS_ABOVE);
+			fill.setColor(Color.RED);
+			r.addFillOutsideLine(fill);		*/	    
+			mRenderer.addSeriesRenderer(r);
+		}
 		  		    
-		    mRenderer.setChartTitle("");
-		  //  mRenderer.setXTitle("date");
-		    mRenderer.setYTitle("weight / Kg");
+		mRenderer.setChartTitle("");
+		//  mRenderer.setXTitle("date");
+		mRenderer.setYTitle("weight / Kg");
 
-		    mRenderer.setXAxisMin(weightHistory.getFirstDate().getTime());
-		    mRenderer.setXAxisMax(weightHistory.getLastDate().getTime());
-		    mRenderer.setYAxisMin(60);
-		    mRenderer.setYAxisMax(100);
-		    mRenderer.setAxesColor(Color.GRAY);
-		    mRenderer.setLabelsColor(Color.LTGRAY);    
+		mRenderer.setXAxisMin(weightHistory.getFirstDate().getTime());
+		mRenderer.setXAxisMax(weightHistory.getLastDate().getTime());
+		mRenderer.setYAxisMin(60);
+		mRenderer.setYAxisMax(100);
+		mRenderer.setAxesColor(Color.GRAY);
+		mRenderer.setLabelsColor(Color.LTGRAY);    
 		    
-		    mChart = ChartFactory.getTimeChartView(getActivity(), mDataset,
-	//		      mRenderer, "MMM yyyy");
-				  mRenderer, "MMM");
-			// add the chart to the layout
-		    
-		    layout.addView(mChart);			 
-		} 
+		mChart = ChartFactory.getTimeChartView(getActivity(), mDataset,
+		    	//mRenderer, "MMM yyyy");
+		    	mRenderer, "MMM");
+		layout.addView(mChart); 
     }
         
     public void onActivityCreated(Bundle savedInstanceState) { 

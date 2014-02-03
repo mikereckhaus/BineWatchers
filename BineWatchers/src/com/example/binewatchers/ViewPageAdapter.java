@@ -20,7 +20,6 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
         // Open FragmentTab1.java
         case 0:
             FragmentTabCalculator fragmenttab1 = new FragmentTabCalculator();
-            
             return fragmenttab1;
  
         // Open FragmentTab2.java
@@ -38,7 +37,6 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
  
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
         return PAGE_COUNT;
     }
  

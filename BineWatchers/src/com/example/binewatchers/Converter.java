@@ -9,6 +9,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Converts data types
+ * 
+ * 
+ * @author Mike
+ *
+ */
 public class Converter {
 
 	public static Double editTextToDouble( EditText editText)

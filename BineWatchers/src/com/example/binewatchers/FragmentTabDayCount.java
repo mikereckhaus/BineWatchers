@@ -29,7 +29,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 
 public class FragmentTabDayCount extends SherlockFragment {
 
-	DayCount dayCount = new DayCount();
+	PointsPerDay dayCount = new PointsPerDay();
 	public static final String USED_POINTS = "UsedPoints";
 	
 	EditText editTextDailyPoints;
@@ -38,11 +38,20 @@ public class FragmentTabDayCount extends SherlockFragment {
 	
 	Button buttonReset;
 	Button buttonAddPoints;
+
+	public FragmentTabDayCount()
+	{
+		dayCount.restore();
+	}
 	
+	/*
+	 * When points per day changed, store it persistently 
+	 */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        // Get the view from fragmenttab1.xml
+        
+    	// Get the view from the layout
         View view = inflater.inflate(R.layout.fragmenttab_daycount, container, false);
         
         editTextDailyPoints = (EditText) view.findViewById(R.id.editTextDailyPoints);
@@ -65,6 +74,9 @@ public class FragmentTabDayCount extends SherlockFragment {
 			}
 		});
         
+        /**
+         * Restore daily points on creation
+         */
         Integer dailyPoints = PreferenceProvider.getInstance().getDailyPoints();
         if ( dailyPoints != 0 )
         {
@@ -174,11 +186,17 @@ public class FragmentTabDayCount extends SherlockFragment {
 			}
 		});
     	
-    	dayCount.restore();
     	editTextUsedPoints.setText(String.format("%.2f", dayCount.getUsedPoints()));
         
-       	recreateTable((TableLayout) view.findViewById(R.id.tableLayoutConsumedPoints));
        	return view;
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
+       	recreateTable((TableLayout) getView().findViewById(R.id.tableLayoutConsumedPoints));
+    	
     }
     
     /**
@@ -194,10 +212,7 @@ public class FragmentTabDayCount extends SherlockFragment {
     
     public void onActivityCreated(Bundle savedInstanceState) { 
         super.onActivityCreated(savedInstanceState);
-        
-    /*    final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-  */}
+    }
  
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -283,5 +298,4 @@ public class FragmentTabDayCount extends SherlockFragment {
 		}
     	consumedTable.invalidate();
     }
-    
 }
