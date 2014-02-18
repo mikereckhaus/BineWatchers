@@ -41,7 +41,7 @@ public class FragmentTabDayCount extends SherlockFragment {
 
 	public FragmentTabDayCount()
 	{
-		dayCount.restore();
+		
 	}
 	
 	/*
@@ -50,7 +50,8 @@ public class FragmentTabDayCount extends SherlockFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        
+    	dayCount.restore();
+    	
     	// Get the view from the layout
         View view = inflater.inflate(R.layout.fragmenttab_daycount, container, false);
         

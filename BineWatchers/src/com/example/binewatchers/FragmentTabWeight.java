@@ -52,8 +52,7 @@ public class FragmentTabWeight extends SherlockFragment {
 	
 	public FragmentTabWeight()
 	{
-		weightHistory = new WeightHistory();
-		weightHistory.restore();
+
 		    
 	}
 	
@@ -69,6 +68,9 @@ public class FragmentTabWeight extends SherlockFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+    	
+		weightHistory = new WeightHistory();
+		weightHistory.restore();
     	
     	// Get the view from fragmenttab1.xml
         View view = inflater.inflate(R.layout.fragmenttab_weight, container, false);
