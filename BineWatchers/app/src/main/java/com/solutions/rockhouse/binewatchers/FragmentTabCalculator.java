@@ -2,59 +2,84 @@ package com.solutions.rockhouse.binewatchers;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FragmentTabCalculator extends Fragment implements NumberPicker.OnValueChangeListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
-	final String KCAL_BUNDLE_ID = "KCAL_BUNDLE_ID";
-	final String GRAM_BUNDLE_ID = "GRAM_BUNDLE_ID";
-	final String FAT_BUNDLE_ID = "FAT_BUNDLE_ID";
+public class FragmentTabCalculator extends Fragment implements NumberPicker.OnValueChangeListener, TextWatcher {
 
-	// step size for pickers
-	private int gramStepsize = 50;
-	private int kCalStepsize = 1;
-	private int fatStepsize = 1;
+	final String BUNDLE_KCAL = "BUNDLE_KCAL";
+	final String BUNDLE_GRAM = "BUNDLE_GRAM";
+	final String BUNDLE_FAT = "BUNDLE_FAT";
 
+	private Unbinder unbinder;
 
-	Button buttonEat;
+	@BindView(R.id.edit_fat) EditText editFat;
+	@BindView(R.id.edit_gram) EditText editGram;
+	@BindView(R.id.edit_kcal) EditText editKcal;
+
+	@BindView(R.id.edit_points) EditText editPoints;
+	@BindView(R.id.image_check)	ImageView imageCheck;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Get the view from fragmenttab1.xml
-		View view = inflater.inflate(R.layout.fragmenttab_calculator,
+		final View view = inflater.inflate(R.layout.fragmenttab_calculator,
 				container, false);
 
-		/**
-		 * Whenn eaten, send to other fragment via the activity
-		 */
-		buttonEat = (Button)view.findViewById(R.id.buttonEat);
-		buttonEat.setOnClickListener(new View.OnClickListener() {
+		unbinder = ButterKnife.bind(this, view);
+
+		editFat.addTextChangedListener(this);
+		editGram.addTextChangedListener(this);
+		editKcal.addTextChangedListener(this);
+		editPoints.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onClick(View v) {
-				IPointsConsumerListener act = (IPointsConsumerListener)getActivity();
-				act.consumePoints( Converter.textViewToDouble((TextView) getView().findViewById(R.id.textPoints)) );
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				imageCheck.setVisibility(View.GONE);
 			}
 		});
 
-
-		NumberPicker pickerFat = (NumberPicker) view.findViewById(R.id.pickerFat);
-		configurePicker( pickerFat, fatStepsize, 100, 3);
-
-		NumberPicker pickerGram = (NumberPicker) view.findViewById(R.id.pickerGram);
-		configurePicker( pickerGram, gramStepsize, 20, 3);
-
-		NumberPicker pickerKCal = (NumberPicker) view.findViewById(R.id.pickerKCal);
-		configurePicker( pickerKCal, kCalStepsize, 600, 100);
-
 		return view;
+	}
+
+	/**
+	 * Whenn eaten, send to other fragment via the activity
+	 */
+	@OnClick(R.id.action_add)
+	public void consumePoints(View view){
+		IPointsConsumerListener act = (IPointsConsumerListener)getActivity();
+		act.consumePoints( Converter.textViewToDouble( editPoints ) );
+
+		// indicate by making points green
+		imageCheck.setVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -64,7 +89,7 @@ public class FragmentTabCalculator extends Fragment implements NumberPicker.OnVa
 	 * @param maxSteps - number of entries in the picker
 	 * @param initialStep - value after creation
      */
-	private void configurePicker(NumberPicker picker, int stepsize, int maxSteps, int initialStep) {
+	/*private void configurePicker(NumberPicker picker, int stepsize, int maxSteps, int initialStep) {
 		picker.setMaxValue(maxSteps-1);
 		picker.setMinValue(0);
 
@@ -87,7 +112,7 @@ public class FragmentTabCalculator extends Fragment implements NumberPicker.OnVa
 		String[] valArray = values.toArray(new String[values.size()]);
 		picker.setDisplayedValues(valArray);
 
-	}
+	}*/
 
 
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -95,26 +120,25 @@ public class FragmentTabCalculator extends Fragment implements NumberPicker.OnVa
 
 		// restore state
 		if ( savedInstanceState != null ) {
-			if (savedInstanceState.containsKey(GRAM_BUNDLE_ID)) {
-				((NumberPicker) getView().findViewById(R.id.pickerGram)).setValue(savedInstanceState.getInt(GRAM_BUNDLE_ID));
+			if (savedInstanceState.containsKey(BUNDLE_FAT)) {
+				editFat.setText(savedInstanceState.getString(BUNDLE_FAT));
 			}
-			if (savedInstanceState.containsKey(FAT_BUNDLE_ID)) {
-				((NumberPicker) getView().findViewById(R.id.pickerFat)).setValue(savedInstanceState.getInt(FAT_BUNDLE_ID));
+			if (savedInstanceState.containsKey(BUNDLE_GRAM)) {
+				editGram.setText(savedInstanceState.getString(BUNDLE_GRAM));
 			}
-			if (savedInstanceState.containsKey(KCAL_BUNDLE_ID)) {
-				((NumberPicker) getView().findViewById(R.id.pickerKCal)).setValue(savedInstanceState.getInt(KCAL_BUNDLE_ID));
+			if (savedInstanceState.containsKey(BUNDLE_KCAL)) {
+				editKcal.setText(savedInstanceState.getString(BUNDLE_KCAL));
 			}
 		}
-
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save state
-		outState.putInt(GRAM_BUNDLE_ID, ((NumberPicker)getView().findViewById(R.id.pickerGram)).getValue());
-		outState.putInt(FAT_BUNDLE_ID, ((NumberPicker)getView().findViewById(R.id.pickerFat)).getValue());
-		outState.putInt(KCAL_BUNDLE_ID, ((NumberPicker)getView().findViewById(R.id.pickerKCal)).getValue());
+		outState.putString(BUNDLE_FAT, editFat.getText().toString());
+		outState.putString(BUNDLE_GRAM, editGram.getText().toString());
+		outState.putString(BUNDLE_KCAL, editKcal.getText().toString());
 		setUserVisibleHint(true);
 	}
 
@@ -125,9 +149,18 @@ public class FragmentTabCalculator extends Fragment implements NumberPicker.OnVa
 	}
 
 	double calculatePoints() {
-		double fat = ((NumberPicker)getView().findViewById(R.id.pickerFat)).getValue() * fatStepsize;
-		double kCal = ((NumberPicker)getView().findViewById(R.id.pickerKCal)).getValue() * kCalStepsize;
-		double gram = ((NumberPicker)getView().findViewById(R.id.pickerGram)).getValue() * gramStepsize;
+		double fat = 1.0;
+		double gram = 100.0;
+		double kCal = 100.0;
+
+		try {
+			fat = Double.valueOf(editFat.getText().toString());
+			gram = Double.valueOf(editGram.getText().toString());
+			kCal = Double.valueOf(editKcal.getText().toString());
+		}
+		catch (NumberFormatException e){
+			return 0.0;
+		}
 
 		double  result = 0.0;
 		if ( gram > 0 ) {
@@ -140,10 +173,32 @@ public class FragmentTabCalculator extends Fragment implements NumberPicker.OnVa
 	@Override
 	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 		updatePoints();
+		imageCheck.setVisibility(View.GONE);
 	}
 
 	private void updatePoints() {
 		Double res = calculatePoints();
-		((TextView)getView().findViewById(R.id.textPoints)).setText(String.format("%.2f", res));
+		editPoints.setText(String.format("%.2f", res));
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+	}
+
+	@Override
+	public void afterTextChanged(Editable s) {
+		updatePoints();
+		imageCheck.setVisibility(View.GONE);
+	}
+
+	@Override public void onDestroyView() {
+		super.onDestroyView();
+		unbinder.unbind();
 	}
 }

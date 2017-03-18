@@ -3,16 +3,21 @@ package com.solutions.rockhouse.binewatchers;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-public class MainActivity extends FragmentActivity implements IPointsConsumerListener{
+public class MainActivity extends AppCompatActivity implements IPointsConsumerListener{
 
     // Declare Variables
-//    ActionBar mActionBar;
+    ActionBar mActionBar;
     ViewPager mPager;
   //  ActionBar.Tab tabCalculator;
   //  ActionBar.Tab tabDayCount;
@@ -28,9 +33,17 @@ public class MainActivity extends FragmentActivity implements IPointsConsumerLis
         // Get the view from activity_main.xml
         setContentView(R.layout.activity_main);
 
-        // Activate Navigation Mode Tabs
-    //    mActionBar = getActionBar();
-        //mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // add toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        // create toolbar tabs
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Calculator"));
+        tabLayout.addTab(tabLayout.newTab().setText("DayCount"));
+        tabLayout.addTab(tabLayout.newTab().setText("Weight"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         // Locate ViewPager in activity_main.xml
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -38,58 +51,29 @@ public class MainActivity extends FragmentActivity implements IPointsConsumerLis
         // Activate Fragment Manager
         FragmentManager fm = getSupportFragmentManager();
 
-        // Capture ViewPager page swipes
-        ViewPager.SimpleOnPageChangeListener ViewPagerListener = new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                // Find the ViewPager Position
-      //          mActionBar.setSelectedNavigationItem(position);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
-        };
+        // send page swipes to tab indicator
+        mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        mPager.setOnPageChangeListener(ViewPagerListener);
-        // Locate the adapter class called ViewPagerAdapter.java
-        ViewPageAdapter viewpageradapter = new ViewPageAdapter(fm);
         // Set the View Pager Adapter into ViewPager
-        mPager.setAdapter(viewpageradapter);
+        mPager.setAdapter(new ViewPageAdapter(fm));
 
-        // Capture tab button clicks
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-
+        // if tab clicked - do swipe
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabReselected(ActionBar.Tab tab,
-                                        android.app.FragmentTransaction arg1) {
-            }
-
-            @Override
-            public void onTabSelected(ActionBar.Tab tab,
-                                      android.app.FragmentTransaction arg1) {
-                // Pass the position on tab click to ViewPager
+            public void onTabSelected(TabLayout.Tab tab) {
                 mPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onTabUnselected(ActionBar.Tab arg0,
-                                        android.app.FragmentTransaction arg1) {
-                // TODO Auto-generated method stub
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
-        };
 
-        // Create first Tab
-        /*tabCalculator = mActionBar.newTab().setText("Calculator").setTabListener(tabListener);
-        mActionBar.addTab(tabCalculator);
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
-        // Create second Tab
-        tabDayCount = mActionBar.newTab().setText("DayCount").setTabListener(tabListener);
-        mActionBar.addTab(tabDayCount);
-
-        // Create third Tab
-        tabWeight = mActionBar.newTab().setText("Weight").setTabListener(tabListener);
-        mActionBar.addTab(tabWeight);*/
+            }
+        });
     }
 
 
@@ -97,7 +81,6 @@ public class MainActivity extends FragmentActivity implements IPointsConsumerLis
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-
     }
 
 
